@@ -26,7 +26,7 @@
           <input
             type="checkbox"
             :checked="node.checked"
-            @input="handleClickNode(node)"
+            @input="handleClickNode(node, $event)"
           />
           <span class="ml-2">
             {{ node.label }}
@@ -56,6 +56,7 @@ export default {
   data() {
     return {
       showChildren: false,
+      isChecked: false,
     };
   },
 
@@ -69,17 +70,15 @@ export default {
     handleClickParent() {
       this.showChildren = !this.showChildren;
     },
-    handleClickNode(node) {
-      // console.log(node.label);
-      this.recursive(node);
+    handleClickNode(node, event) {
+      this.isChecked = event.target.checked;
+      this.callRecursively(node);
     },
-    recursive(node) {
-      // console.log(node);
+    callRecursively(node) {
+      node.checked = this.isChecked;
       if (node.children && node.children.length) {
-        // console.log('if');
-        node.children.forEach((n) => {
-          n.checked = !n.checked;
-          this.recursive(n);
+        node.children.forEach((childNode) => {
+          this.callRecursively(childNode);
         });
       }
     },
