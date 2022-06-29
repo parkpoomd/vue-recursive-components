@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <ul v-if="hasChildren && showChildren" class="pl-6">
+    <ul v-show="hasChildren && showChildren" class="pl-6">
       <node-item
         v-for="child in node.children"
         :key="child.id"
