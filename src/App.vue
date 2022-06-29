@@ -27,6 +27,7 @@
 </template>
 
 <script>
+// import uniq from 'lodash/uniq';
 import NodeItem from './components/NodeItem.vue';
 
 export default {
@@ -89,42 +90,18 @@ export default {
     };
   },
 
-  created() {
-    // fetch('https://jsonplaceholder.typicode.com/photos')
-    //   .then((response) => response.json())
-    //   .then((json) => {
-    //     this.nodes = [
-    //       {
-    //         id: 12494,
-    //         label: 'Folder 1',
-    //         checked: false,
-    //         children: json
-    //           .map((element) => ({
-    //             id: element.id,
-    //             label: element.title.substring(0, 10),
-    //             checked: false,
-    //           }))
-    //           .slice(0, 500),
-    //       },
-    //     ];
-    //   });
-  },
-
   computed: {
     filterEmployees() {
-      console.log('filter');
       let items = this.employees;
 
       if (this.selected.length === 0) {
         items = items.map((item) => ({ ...item, checked: false }));
       } else {
-        this.selected.map((id) => {
-          items = this.employees.map((employee) => {
-            if (employee.nodeId === id) {
-              return { ...employee, checked: true };
-            }
-            return employee;
-          });
+        items = this.employees.map((employee) => {
+          if (this.selected.includes(employee.nodeId)) {
+            return { ...employee, checked: true };
+          }
+          return employee;
         });
       }
 
@@ -135,11 +112,10 @@ export default {
   methods: {
     handleSelected(node) {
       this.callRecursively(node);
-      console.log(this.selected);
     },
     callRecursively(node) {
       if (node.checked) {
-        const index = this.selected.findIndex((element) => element === node.id);
+        const index = this.selected.findIndex((id) => id === node.id);
         if (index === -1) {
           this.selected = [...this.selected, node.id];
         }
