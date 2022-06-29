@@ -1,5 +1,5 @@
 <template>
-  <li class="list-none">
+  <li>
     <div class="flex items-center">
       <button
         type="button"
@@ -40,6 +40,7 @@
         v-for="child in node.children"
         :key="child.id"
         :node="child"
+        :handleSelected="handleSelected"
       ></node-item>
     </ul>
   </li>
@@ -51,6 +52,7 @@ export default {
 
   props: {
     node: Object,
+    handleSelected: Function,
   },
 
   data() {
@@ -73,6 +75,7 @@ export default {
     handleClickNode(node, event) {
       this.isChecked = event.target.checked;
       this.callRecursively(node);
+      this.handleSelected(node);
     },
     callRecursively(node) {
       node.checked = this.isChecked;
