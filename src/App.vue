@@ -9,25 +9,39 @@
       ></node-item>
     </ul>
 
-    <ul class="pl-6">
-      <li
-        class="flex items-center"
-        v-for="employee in filterEmployees"
-        :key="employee.id"
-      >
-        <label class="inline-flex items-center">
-          <input type="checkbox" :checked="employee.checked" />
-          <span class="ml-2">
-            {{ employee.name }}
-          </span>
-        </label>
-      </li>
-    </ul>
+    <div class="w-64">
+      <label class="inline-flex items-center pl-6 pb-2">
+        <input
+          type="checkbox"
+          :checked="statusEmployeeCheckAll"
+          @input="handleCheckAllEmployee($event)"
+        />
+        <span class="ml-2">Select All</span>
+      </label>
+      <ul class="pl-6">
+        <li
+          class="flex items-center"
+          v-for="employee in filterEmployees"
+          :key="employee.id"
+        >
+          <label class="inline-flex items-center">
+            <input
+              type="checkbox"
+              :checked="employee.checked"
+              @input="handleCheckEmployee(employee, $event)"
+            />
+            <span class="ml-2">
+              {{ employee.name }}
+            </span>
+          </label>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
-// import uniq from 'lodash/uniq';
+import _ from 'lodash';
 import NodeItem from './components/NodeItem.vue';
 
 export default {
@@ -91,25 +105,41 @@ export default {
   },
 
   computed: {
+    statusEmployeeCheckAll() {
+      return _.every(this.filterEmployees, ['checked', true]);
+    },
     filterEmployees() {
       let items = this.employees;
 
-      if (this.selected.length === 0) {
-        items = items.map((item) => ({ ...item, checked: false }));
-      } else {
-        items = this.employees.map((employee) => {
-          if (this.selected.includes(employee.nodeId)) {
-            return { ...employee, checked: true };
-          }
-          return employee;
-        });
-      }
+      items = this.employees.map((employee) => {
+        if (this.selected.includes(employee.nodeId)) {
+          return { ...employee, checked: true };
+        }
+        return employee;
+      });
 
       return items;
     },
   },
 
   methods: {
+    handleCheckEmployee(employee, event) {
+      const isChecked = event.target.checked;
+      const { id } = employee;
+      console.log(isChecked, id);
+    },
+    handleCheckAllEmployee(event) {
+      const isChecked = event.target.checked;
+      console.log(isChecked);
+    },
+    re(node, isChecked) {
+      node.checked = isChecked;
+      if (node.children && node.children.length) {
+        node.children.forEach((child) => {
+          this.re(child);
+        });
+      }
+    },
     handleSelected(node) {
       this.callRecursively(node);
     },
