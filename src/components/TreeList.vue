@@ -2,7 +2,11 @@
   <div class="p-10 flex">
     <div class="w-64 pr-6 border-r">
       <label class="inline-flex items-center pl-1 pb-2">
-        <input type="checkbox" @input="handleSelectedAllOrganization($event)" />
+        <input
+          type="checkbox"
+          :checked="statusSelectedAllOrganization"
+          @input="handleSelectedAllOrganization($event)"
+        />
         <span class="ml-2">Select All</span>
       </label>
       <ul>
@@ -150,6 +154,7 @@ export default {
         ...employee,
         checked,
       }));
+      this.handleSelectedAllOrganization(event);
     },
     handleSelectedEmployee(event, employee) {
       const { checked } = event.target;
