@@ -26,7 +26,7 @@
           <input
             type="checkbox"
             :checked="node.checked"
-            @input="handleClickNode(node, $event)"
+            @input="handleClickNode($event, node)"
           />
           <span class="ml-2">
             {{ node.label }}
@@ -36,19 +36,19 @@
     </div>
 
     <ul v-show="hasChildren && showChildren" class="pl-6">
-      <node-item
+      <tree-list-item
         v-for="child in node.children"
         :key="child.id"
         :node="child"
         :handleSelected="handleSelected"
-      ></node-item>
+      ></tree-list-item>
     </ul>
   </li>
 </template>
 
 <script>
 export default {
-  name: 'NodeItem',
+  name: 'TreeListItem',
 
   props: {
     node: Object,
@@ -58,7 +58,7 @@ export default {
   data() {
     return {
       showChildren: false,
-      isChecked: false,
+      isNodeCheck: false,
     };
   },
 
@@ -72,16 +72,17 @@ export default {
     handleClickParent() {
       this.showChildren = !this.showChildren;
     },
-    handleClickNode(node, event) {
-      this.isChecked = event.target.checked;
-      this.callRecursively(node);
+    handleClickNode(event, node) {
+      this.isNodeCheck = event.target.checked;
+
+      this.setNodeRecursive(node);
       this.handleSelected(node);
     },
-    callRecursively(node) {
-      node.checked = this.isChecked;
+    setNodeRecursive(node) {
+      node.checked = this.isNodeCheck;
       if (node.children && node.children.length) {
-        node.children.forEach((childNode) => {
-          this.callRecursively(childNode);
+        node.children.forEach((children) => {
+          this.setNodeRecursive(children);
         });
       }
     },
